@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
         Log.v(TAG, "onSurfaceCreated");
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         mShaderProgram = new ShaderProgram(1.0f);
         mShaderProgramOverlay = new ShaderProgram(0.5f);
@@ -94,9 +96,6 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
         Log.v(TAG, "onSurfaceChanged");
         // Set the OpenGL viewport to fill the entire surface.
         glViewport(0, 0, width, height);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         /*
         frustum は lookAtM で決定される視軸に対して相対的な視界範囲を決めるという形で使われるものと思われ、
