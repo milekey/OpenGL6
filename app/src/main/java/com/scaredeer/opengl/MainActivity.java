@@ -33,12 +33,14 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
     private final float[] mVPMatrix = new float[16];
 
     private ShaderProgram mShaderProgram;
-    private Tile mTile;
     private Bitmap mBitmap;
+    private Texture mTexture;
+    private Tile mTile;
 
     private ShaderProgram mShaderProgramOverlay;
-    private Tile mTileOverlay;
     private Bitmap mBitmapOverlay;
+    private Texture mTextureOverlay;
+    private Tile mTileOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +53,8 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
 
         setContentView(mGLSurfaceView);
 
-        mBitmap = Tile.loadBitmap(this, R.drawable.pale_14_14552_6451);
-        mBitmapOverlay = Tile.loadBitmap(this, R.drawable.hills_14_14552_6451);
+        mBitmap = Texture.loadBitmap(this, R.drawable.hill_14_14552_6451);
+        mBitmapOverlay = Texture.loadBitmap(this, R.drawable.pale_14_14552_6451);
     }
 
     @Override
@@ -87,7 +89,10 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         mShaderProgram = new ShaderProgram(1.0f);
-        mShaderProgramOverlay = new ShaderProgram(0.5f);
+        mShaderProgramOverlay = new ShaderProgram(0.6f);
+
+        mTexture = new Texture(mBitmap);
+        mTextureOverlay = new Texture(mBitmapOverlay);
     }
 
     // GLSurfaceView.Renderer (2/3)
@@ -139,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements GLSurfaceView.Ren
         mShaderProgram.use();
         // Pass the matrix into the shader program.
         mShaderProgram.setMVPMatrix(mVPMatrix);
-        mTile = new Tile(mShaderProgram, 0, 0, mBitmap);
+        mTile = new Tile(mShaderProgram, 0, 0, mTexture.name);
 
         // setMVPMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
         mShaderProgramOverlay.use();
         // Pass the matrix into the shader program.
         mShaderProgramOverlay.setMVPMatrix(mVPMatrix);
-        mTileOverlay = new Tile(mShaderProgramOverlay, 0, 0, mBitmapOverlay);
+        mTileOverlay = new Tile(mShaderProgramOverlay, 0, 0, mTextureOverlay.name);
     }
 
     // GLSurfaceView.Renderer (3/3)

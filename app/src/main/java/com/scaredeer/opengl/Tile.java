@@ -1,29 +1,17 @@
 package com.scaredeer.opengl;
 
 import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_NEAREST;
 import static android.opengl.GLES20.GL_TEXTURE0;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.GL_TEXTURE_MAG_FILTER;
-import static android.opengl.GLES20.GL_TEXTURE_MIN_FILTER;
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.glActiveTexture;
 import static android.opengl.GLES20.glBindTexture;
-import static android.opengl.GLES20.glDeleteTextures;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGenTextures;
-import static android.opengl.GLES20.glGenerateMipmap;
-import static android.opengl.GLES20.glTexParameteri;
 import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glVertexAttribPointer;
-import static android.opengl.GLUtils.texImage2D;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -45,17 +33,16 @@ public class Tile {
             = (POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONENT_COUNT) * BYTES_PER_FLOAT;
     private final FloatBuffer mVertexData;
 
-    private int[] mTextureObjectIds;
-    private final int mTexture;
+    private final int mTextureName;
 
     /**
      * @param shaderProgram ShaderProgram オブジェクト。
      * @param left          タイルの左辺の座標
      * @param top           タイルの上辺の座標
-     * @param bitmap        テクスチャーに使う Bitmap オブジェクト
+     * @param textureName   テクスチャーに使う Bitmap オブジェクト
      */
     @SuppressLint("DefaultLocale")
-    public Tile(ShaderProgram shaderProgram, int left, int top, Bitmap bitmap) {
+    public Tile(ShaderProgram shaderProgram, int left, int top, int textureName) {
         mShaderProgram = shaderProgram;
 
         float[] square = buildSquare(left, top);
@@ -65,7 +52,7 @@ public class Tile {
                 .asFloatBuffer()
                 .put(square);
 
-        mTexture = loadTextureFromBitmap(bitmap);
+        mTextureName = textureName;
     }
 
     /**
@@ -96,7 +83,7 @@ public class Tile {
         glActiveTexture(GL_TEXTURE0);
 
         // Bind the texture to this unit.
-        glBindTexture(GL_TEXTURE_2D, mTexture);
+        glBindTexture(GL_TEXTURE_2D, mTextureName);
 
         // Tell the texture uniform sampler to use this texture in the shader by
         // telling it to read from texture unit 0.
@@ -138,79 +125,10 @@ public class Tile {
      * GLSurfaceView.onDrawFrame でループ処理されるべき処理
      */
     public void draw() {
-        if (mTexture != 0) { // mTexture が無効でない（0 でない）場合のみ実行
+        if (mTextureName != 0) { // mTexture が無効でない（0 でない）場合のみ実行
             setTexture();
             bindDataToShaderVariable();
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        }
-    }
-
-    /**
-     * @param bitmap Loads a texture from a Bitmap
-     * @return OpenGL ID for the texture. Returns 0 if the load failed.
-     */
-    private int loadTextureFromBitmap(Bitmap bitmap) {
-        mTextureObjectIds = new int[1];
-        glGenTextures(1, mTextureObjectIds, 0);
-        if (mTextureObjectIds[0] == 0) {
-            Log.w(TAG, "Could not generate a new OpenGL texture object.");
-            return 0;
-        }
-
-        // Bind to the texture in OpenGL
-        glBindTexture(GL_TEXTURE_2D, mTextureObjectIds[0]);
-
-        // Set filtering: a default must be set, or the texture will be black.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        // Load the bitmap into the bound texture.
-        texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
-
-        // Note: Following code may cause an error to be reported in the
-        // ADB log as follows: E/IMGSRV(20095): :0: HardwareMipGen:
-        // Failed to generate texture mipmap levels (error=3)
-        // No OpenGL error will be encountered (glGetError() will return
-        // 0). If this happens, just squash the source image to be
-        // square. It will look the same because of texture coordinates,
-        // and mipmap generation will work.
-
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        // Recycle the bitmap, since its data has been loaded into
-        // OpenGL.
-        bitmap.recycle();
-
-        // Unbind from the texture.
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        return mTextureObjectIds[0];
-    }
-
-    /**
-     * リソースから Bitmap を読み込みたい場合に。loadTextureFromUrl の場合は不要。
-     *
-     * @param context    Context オブジェクト
-     * @param resourceId R.drawable.XXX
-     * @return Bitmap オブジェクト
-     */
-    public static Bitmap loadBitmap(Context context, int resourceId) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;
-
-        // Read in the resource
-        final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-
-        if (bitmap == null) {
-            Log.w(TAG, "Resource ID " + resourceId + " could not be decoded.");
-            return null;
-        }
-
-        return bitmap;
-    }
-
-    public void deleteTexture() {
-        if (mTextureObjectIds != null) {
-            glDeleteTextures(1, mTextureObjectIds, 0);
         }
     }
 }
