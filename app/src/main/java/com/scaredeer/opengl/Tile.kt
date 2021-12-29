@@ -1,6 +1,6 @@
 package com.scaredeer.opengl
 
-import android.opengl.GLES20
+import android.opengl.GLES20.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -69,14 +69,14 @@ class Tile(
      */
     private fun setTexture() {
         // Set the active texture unit to texture unit 0.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+        glActiveTexture(GL_TEXTURE0)
 
         // Bind the texture to this unit.
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureName)
+        glBindTexture(GL_TEXTURE_2D, mTextureName)
 
         // Tell the texture uniform sampler to use this texture in the shader by
         // telling it to read from texture unit 0.
-        GLES20.glUniform1i(mShaderProgram.uTextureUnit, 0)
+        glUniform1i(mShaderProgram.uTextureUnit, 0)
     }
 
     /**
@@ -86,28 +86,28 @@ class Tile(
         // Bind our data, specified by the variable vertexData, to the vertex
         // attribute at location A_POSITION.
         mVertexData.position(0)
-        GLES20.glVertexAttribPointer(
+        glVertexAttribPointer(
             mShaderProgram.aPosition,
             POSITION_COMPONENT_COUNT,
-            GLES20.GL_FLOAT,
+            GL_FLOAT,
             false,
             STRIDE,
             mVertexData
         )
-        GLES20.glEnableVertexAttribArray(mShaderProgram.aPosition)
+        glEnableVertexAttribArray(mShaderProgram.aPosition)
 
         // Bind our data, specified by the variable vertexData, to the vertex
         // attribute at location A_TEXTURE_COORDINATES.
         mVertexData.position(POSITION_COMPONENT_COUNT) // starts right after the vertex (x, y) coordinates
-        GLES20.glVertexAttribPointer(
+        glVertexAttribPointer(
             mShaderProgram.aTextureCoordinates,
             TEXTURE_COORDINATES_COMPONENT_COUNT,
-            GLES20.GL_FLOAT,
+            GL_FLOAT,
             false,
             STRIDE,
             mVertexData
         )
-        GLES20.glEnableVertexAttribArray(mShaderProgram.aTextureCoordinates)
+        glEnableVertexAttribArray(mShaderProgram.aTextureCoordinates)
     }
 
     /**
@@ -117,7 +117,7 @@ class Tile(
         if (mTextureName != 0) { // mTexture が無効でない（0 でない）場合のみ実行
             setTexture()
             bindDataToShaderVariable()
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
         }
     }
 }

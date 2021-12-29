@@ -1,6 +1,6 @@
 package com.scaredeer.opengl
 
-import android.opengl.GLES20
+import android.opengl.GLES20.*
 import android.util.Log
 
 class ShaderProgram(alpha: Float) {
@@ -37,34 +37,34 @@ class ShaderProgram(alpha: Float) {
          */
         private fun compileShader(type: Int, shaderCode: String): Int {
             // Create a new shader object.
-            val shaderObjectId = GLES20.glCreateShader(type)
+            val shaderObjectId = glCreateShader(type)
             if (shaderObjectId == 0) {
                 Log.w(TAG, "Could not create new shader.")
                 return 0
             }
 
             // Pass in (upload) the shader source.
-            GLES20.glShaderSource(shaderObjectId, shaderCode)
+            glShaderSource(shaderObjectId, shaderCode)
 
             // Compile the shader.
-            GLES20.glCompileShader(shaderObjectId)
+            glCompileShader(shaderObjectId)
 
             // Get the compilation status.
             val compileStatus = IntArray(1)
-            GLES20.glGetShaderiv(shaderObjectId, GLES20.GL_COMPILE_STATUS, compileStatus, 0)
+            glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS, compileStatus, 0)
 
             // Print the shader info log to the Android log output.
             Log.v(TAG, """
             Result of compiling source:
                 $shaderCode
             Log:
-                ${GLES20.glGetShaderInfoLog(shaderObjectId)}
+                ${glGetShaderInfoLog(shaderObjectId)}
             """.trimIndent())
 
             // Verify the compile status.
             if (compileStatus[0] == 0) {
                 // If it failed, delete the shader object.
-                GLES20.glDeleteShader(shaderObjectId)
+                glDeleteShader(shaderObjectId)
                 Log.w(TAG, "Compilation of shader failed.")
                 return 0
             }
@@ -84,34 +84,34 @@ class ShaderProgram(alpha: Float) {
          */
         private fun linkProgram(vertexShaderId: Int, fragmentShaderId: Int): Int {
             // Create a new program object.
-            val programObjectId = GLES20.glCreateProgram()
+            val programObjectId = glCreateProgram()
             if (programObjectId == 0) {
                 Log.w(TAG, "Could not create new program")
                 return 0
             }
 
             // Attach the vertex shader to the program.
-            GLES20.glAttachShader(programObjectId, vertexShaderId)
+            glAttachShader(programObjectId, vertexShaderId)
             // Attach the fragment shader to the program.
-            GLES20.glAttachShader(programObjectId, fragmentShaderId)
+            glAttachShader(programObjectId, fragmentShaderId)
 
             // Link the two shaders together into a program.
-            GLES20.glLinkProgram(programObjectId)
+            glLinkProgram(programObjectId)
 
             // Get the link status.
             val linkStatus = IntArray(1)
-            GLES20.glGetProgramiv(programObjectId, GLES20.GL_LINK_STATUS, linkStatus, 0)
+            glGetProgramiv(programObjectId, GL_LINK_STATUS, linkStatus, 0)
 
             // Print the program info log to the Android log output.
             Log.v(TAG, """
                 Result log of linking program:
-                ${GLES20.glGetProgramInfoLog(programObjectId)}
+                ${glGetProgramInfoLog(programObjectId)}
             """.trimIndent())
 
             // Verify the link status.
             if (linkStatus[0] == 0) {
                 // If it failed, delete the program object.
-                GLES20.glDeleteProgram(programObjectId)
+                glDeleteProgram(programObjectId)
                 Log.w(TAG, "Linking of program failed.")
                 return 0
             }
@@ -128,13 +128,13 @@ class ShaderProgram(alpha: Float) {
          * @return boolean
          */
         private fun validateProgram(programObjectId: Int): Boolean {
-            GLES20.glValidateProgram(programObjectId)
+            glValidateProgram(programObjectId)
             val validateStatus = IntArray(1)
-            GLES20.glGetProgramiv(programObjectId, GLES20.GL_VALIDATE_STATUS, validateStatus, 0)
+            glGetProgramiv(programObjectId, GL_VALIDATE_STATUS, validateStatus, 0)
             Log.v(TAG, """
                 Result status code of validating program: ${validateStatus[0]}
                 Log:
-                ${GLES20.glGetProgramInfoLog(programObjectId)}
+                ${glGetProgramInfoLog(programObjectId)}
             """.trimIndent())
             return validateStatus[0] != 0
         }
@@ -160,23 +160,23 @@ class ShaderProgram(alpha: Float) {
         """
 
         // Compile the shaders.
-        val vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, VERTEX_SHADER)
-        val fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderSource)
+        val vertexShader = compileShader(GL_VERTEX_SHADER, VERTEX_SHADER)
+        val fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource)
 
         // Link them into a shader program.
         mShaderProgram = linkProgram(vertexShader, fragmentShader)
         validateProgram(mShaderProgram)
 
         // Retrieve pointer indices for input variables.
-        mUMvpMatrix = GLES20.glGetUniformLocation(mShaderProgram, U_MVP_MATRIX)
-        aPosition = GLES20.glGetAttribLocation(mShaderProgram, A_POSITION)
-        aTextureCoordinates = GLES20.glGetAttribLocation(mShaderProgram, A_TEXTURE_COORDINATES)
-        uTextureUnit = GLES20.glGetUniformLocation(mShaderProgram, U_TEXTURE_UNIT)
+        mUMvpMatrix = glGetUniformLocation(mShaderProgram, U_MVP_MATRIX)
+        aPosition = glGetAttribLocation(mShaderProgram, A_POSITION)
+        aTextureCoordinates = glGetAttribLocation(mShaderProgram, A_TEXTURE_COORDINATES)
+        uTextureUnit = glGetUniformLocation(mShaderProgram, U_TEXTURE_UNIT)
     }
 
     fun use() {
         // Set the current OpenGL shader program to this program.
-        GLES20.glUseProgram(mShaderProgram)
+        glUseProgram(mShaderProgram)
     }
 
     /**
@@ -186,6 +186,6 @@ class ShaderProgram(alpha: Float) {
      */
     fun setMVPMatrix(mvpMatrix: FloatArray?) {
         // Pass the matrix into the shader program.
-        GLES20.glUniformMatrix4fv(mUMvpMatrix, 1, false, mvpMatrix, 0)
+        glUniformMatrix4fv(mUMvpMatrix, 1, false, mvpMatrix, 0)
     }
 }

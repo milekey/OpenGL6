@@ -2,9 +2,9 @@ package com.scaredeer.opengl
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.opengl.GLES20
-import android.opengl.GLUtils
 import android.graphics.BitmapFactory
+import android.opengl.GLES20.*
+import android.opengl.GLUtils
 import android.util.Log
 
 class Texture(bitmap: Bitmap) {
@@ -46,7 +46,7 @@ class Texture(bitmap: Bitmap) {
      */
     private fun generateTexture(bitmap: Bitmap): Int {
         val storedTextureNames = IntArray(1)
-        GLES20.glGenTextures(1, storedTextureNames, 0)
+        glGenTextures(1, storedTextureNames, 0)
         if (storedTextureNames[0] == 0) {
             Log.w(TAG, "Could not generate a new OpenGL texture object.")
             return 0
@@ -54,21 +54,13 @@ class Texture(bitmap: Bitmap) {
         val textureName = storedTextureNames[0]
 
         // Bind to the texture in OpenGL
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureName)
+        glBindTexture(GL_TEXTURE_2D, textureName)
 
         // Set filtering: a default must be set, or the texture will be black.
-        GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_NEAREST
-        )
-        GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_NEAREST
-        )
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         // Load the bitmap into the bound texture.
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
 
         // Note: Following code may cause an error to be reported in the ADB log as follows:
         // E/IMGSRV(20095): :0: HardwareMipGen: Failed to generate texture mipmap levels (error=3)
@@ -78,12 +70,12 @@ class Texture(bitmap: Bitmap) {
         //glGenerateMipmap(GL_TEXTURE_2D)
 
         // Unbind from the texture.
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        glBindTexture(GL_TEXTURE_2D, 0)
         return textureName
     }
 
     fun deleteTexture() {
         val storedTextureNames = intArrayOf(name)
-        GLES20.glDeleteTextures(1, storedTextureNames, 0)
+        glDeleteTextures(1, storedTextureNames, 0)
     }
 }
