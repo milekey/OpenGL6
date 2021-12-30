@@ -96,6 +96,7 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
             width / 2f, height / 2f, 1f,
             0f, -1f, 0f
         )
+
         Matrix.multiplyMM(
             mVpMatrix, 0,
             mProjectionMatrix, 0, mViewMatrix, 0
