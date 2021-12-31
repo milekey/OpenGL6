@@ -102,16 +102,16 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
             mProjectionMatrix, 0, mViewMatrix, 0
         )
 
-        // setMVPMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
+        // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
         mShaderProgram!!.use()
         // Pass the matrix into the shader program.
-        mShaderProgram!!.setMVPMatrix(mVpMatrix)
+        mShaderProgram!!.setMvpMatrix(mVpMatrix)
         mTile = Tile(mShaderProgram!!, 0, 0, mTexture!!.name)
 
-        // setMVPMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
+        // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
         mShaderProgramOverlay!!.use()
         // Pass the matrix into the shader program.
-        mShaderProgramOverlay!!.setMVPMatrix(mVpMatrix)
+        mShaderProgramOverlay!!.setMvpMatrix(mVpMatrix)
         mTileOverlay = Tile(mShaderProgramOverlay!!, 0, 0, mTextureOverlay!!.name)
     }
 

@@ -180,11 +180,11 @@ class ShaderProgram(alpha: Float) {
     }
 
     /**
-     * バーテックスシェーダーで定義している MVPMatrix をセットし直すためのメソッド。
+     * バーテックスシェーダーで定義している MvpMatrix をセットし直すためのメソッド。
      *
-     * @param mvpMatrix MVPMatrix
+     * @param mvpMatrix MvpMatrix
      */
-    fun setMVPMatrix(mvpMatrix: FloatArray?) {
+    fun setMvpMatrix(mvpMatrix: FloatArray?) {
         // Pass the matrix into the shader program.
         glUniformMatrix4fv(mUMvpMatrix, 1, false, mvpMatrix, 0)
     }
