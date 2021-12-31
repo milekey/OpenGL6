@@ -24,20 +24,20 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
         private val TAG = Renderer::class.simpleName
     }
 
-    private val mBitmap: Bitmap? = Texture.loadBitmap(context!!, R.drawable.hill_14_14552_6451)
-    private var mTexture: Texture? = null
-    private var mTile: Tile? = null
+    private val bitmap: Bitmap? = Texture.loadBitmap(context!!, R.drawable.hill_14_14552_6451)
+    private var texture: Texture? = null
+    private var tile: Tile? = null
 
-    private val mBitmapOverlay: Bitmap? = Texture.loadBitmap(context!!, R.drawable.pale_14_14552_6451)
-    private var mTextureOverlay: Texture? = null
-    private var mTileOverlay: Tile? = null
+    private val bitmapOverlay: Bitmap? = Texture.loadBitmap(context!!, R.drawable.pale_14_14552_6451)
+    private var textureOverlay: Texture? = null
+    private var tileOverlay: Tile? = null
 
-    private var mShaderProgram: ShaderProgram? = null
-    private var mShaderProgramOverlay: ShaderProgram? = null
+    private var shaderProgram: ShaderProgram? = null
+    private var shaderProgramOverlay: ShaderProgram? = null
 
-    private val mProjectionMatrix = FloatArray(16)
-    private val mViewMatrix = FloatArray(16)
-    private val mVpMatrix = FloatArray(16)
+    private val projectionMatrix = FloatArray(16)
+    private val viewMatrix = FloatArray(16)
+    private val vpMatrix = FloatArray(16)
 
     override fun onSurfaceCreated(gl10: GL10, eglConfig: EGLConfig) {
         Log.v(TAG, "onSurfaceCreated")
@@ -45,13 +45,13 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        mShaderProgram = ShaderProgram(1.0f)
-        mShaderProgramOverlay = ShaderProgram(0.6f)
+        shaderProgram = ShaderProgram(1.0f)
+        shaderProgramOverlay = ShaderProgram(0.6f)
 
-        mTexture = Texture(mBitmap!!)
-        mBitmap.recycle()
-        mTextureOverlay = Texture(mBitmapOverlay!!)
-        mBitmapOverlay.recycle()
+        texture = Texture(bitmap!!)
+        bitmap.recycle()
+        textureOverlay = Texture(bitmapOverlay!!)
+        bitmapOverlay.recycle()
     }
 
     override fun onSurfaceChanged(gl10: GL10, width: Int, height: Int) {
@@ -77,7 +77,7 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
         ピクセルサイズに基くことが可能となる。
          */
         Matrix.frustumM(
-            mProjectionMatrix, 0,
+            projectionMatrix, 0,
             -width / 4f, width / 4f, -height / 4f, height / 4f,
             width / 4f, width / 2f
         )
@@ -91,38 +91,38 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
         eyeZ = -eyeX となっているわけである。
          */
         Matrix.setLookAtM(
-            mViewMatrix, 0,
+            viewMatrix, 0,
             width / 2f, height / 2f, -width / 2f,
             width / 2f, height / 2f, 1f,
             0f, -1f, 0f
         )
 
         Matrix.multiplyMM(
-            mVpMatrix, 0,
-            mProjectionMatrix, 0, mViewMatrix, 0
+            vpMatrix, 0,
+            projectionMatrix, 0, viewMatrix, 0
         )
 
         // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
-        mShaderProgram!!.use()
+        shaderProgram!!.use()
         // Pass the matrix into the shader program.
-        mShaderProgram!!.setMvpMatrix(mVpMatrix)
-        mTile = Tile(mShaderProgram!!, 0, 0, mTexture!!.name)
+        shaderProgram!!.setMvpMatrix(vpMatrix)
+        tile = Tile(shaderProgram!!, 0, 0, texture!!.name)
 
         // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
-        mShaderProgramOverlay!!.use()
+        shaderProgramOverlay!!.use()
         // Pass the matrix into the shader program.
-        mShaderProgramOverlay!!.setMvpMatrix(mVpMatrix)
-        mTileOverlay = Tile(mShaderProgramOverlay!!, 0, 0, mTextureOverlay!!.name)
+        shaderProgramOverlay!!.setMvpMatrix(vpMatrix)
+        tileOverlay = Tile(shaderProgramOverlay!!, 0, 0, textureOverlay!!.name)
     }
 
     override fun onDrawFrame(gl10: GL10) {
         // Clear the rendering surface.
         glClear(GL_COLOR_BUFFER_BIT)
 
-        mShaderProgram!!.use()
-        mTile!!.draw()
+        shaderProgram!!.use()
+        tile!!.draw()
 
-        mShaderProgramOverlay!!.use()
-        mTileOverlay!!.draw()
+        shaderProgramOverlay!!.use()
+        tileOverlay!!.draw()
     }
 }

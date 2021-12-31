@@ -6,15 +6,15 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 /**
- * @param mShaderProgram ShaderProgram オブジェクト。
- * @param left          タイルの左辺の座標
- * @param top           タイルの上辺の座標
- * @param mTextureName   テクスチャーに使う Texture オブジェクト名（as int）
+ * @param [shaderProgram] ShaderProgram オブジェクト。
+ * @param [left]          タイルの左辺の座標
+ * @param [top]           タイルの上辺の座標
+ * @param [textureName]   テクスチャーに使う Texture オブジェクト名（as int）
  */
 class Tile(
-    private val mShaderProgram: ShaderProgram,
+    private val shaderProgram: ShaderProgram,
     left: Int, top: Int,
-    private val mTextureName: Int,
+    private val textureName: Int,
 ) {
 
     companion object {
@@ -53,11 +53,11 @@ class Tile(
         }
     }
 
-    private val mVertexData: FloatBuffer
+    private val vertexData: FloatBuffer
 
     init {
         val square = buildSquare(left, top)
-        mVertexData = ByteBuffer
+        vertexData = ByteBuffer
             .allocateDirect(square.size * BYTES_PER_FLOAT)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
@@ -72,11 +72,11 @@ class Tile(
         glActiveTexture(GL_TEXTURE0)
 
         // Bind the texture to this unit.
-        glBindTexture(GL_TEXTURE_2D, mTextureName)
+        glBindTexture(GL_TEXTURE_2D, textureName)
 
         // Tell the texture uniform sampler to use this texture in the shader by
         // telling it to read from texture unit 0.
-        glUniform1i(mShaderProgram.uTextureUnit, 0)
+        glUniform1i(shaderProgram.uTextureUnit, 0)
     }
 
     /**
@@ -85,36 +85,36 @@ class Tile(
     private fun bindDataToShaderVariable() {
         // Bind our data, specified by the variable vertexData, to the vertex
         // attribute at location A_POSITION.
-        mVertexData.position(0)
+        vertexData.position(0)
         glVertexAttribPointer(
-            mShaderProgram.aPosition,
+            shaderProgram.aPosition,
             POSITION_COMPONENT_COUNT,
             GL_FLOAT,
             false,
             STRIDE,
-            mVertexData
+            vertexData
         )
-        glEnableVertexAttribArray(mShaderProgram.aPosition)
+        glEnableVertexAttribArray(shaderProgram.aPosition)
 
         // Bind our data, specified by the variable vertexData, to the vertex
         // attribute at location A_TEXTURE_COORDINATES.
-        mVertexData.position(POSITION_COMPONENT_COUNT) // starts right after the vertex (x, y) coordinates
+        vertexData.position(POSITION_COMPONENT_COUNT) // starts right after the vertex (x, y) coordinates
         glVertexAttribPointer(
-            mShaderProgram.aTextureCoordinates,
+            shaderProgram.aTextureCoordinates,
             TEXTURE_COORDINATES_COMPONENT_COUNT,
             GL_FLOAT,
             false,
             STRIDE,
-            mVertexData
+            vertexData
         )
-        glEnableVertexAttribArray(mShaderProgram.aTextureCoordinates)
+        glEnableVertexAttribArray(shaderProgram.aTextureCoordinates)
     }
 
     /**
      * GLSurfaceView.onDrawFrame でループ処理されるべき処理
      */
     fun draw() {
-        if (mTextureName != 0) { // mTexture が無効でない（0 でない）場合のみ実行
+        if (textureName != 0) { // mTexture が無効でない（0 でない）場合のみ実行
             setTexture()
             bindDataToShaderVariable()
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
