@@ -8,11 +8,10 @@ class ShaderProgram(alpha: Float) {
     companion object {
         private val TAG = ShaderProgram::class.simpleName
 
-        private const val U_MVP_MATRIX = "u_MVPMatrix"
+        private const val U_MVP_MATRIX = "u_MvpMatrix"
         private const val A_POSITION = "a_Position"
         private const val A_TEXTURE_COORDINATES = "a_TextureCoordinates"
         private const val V_TEXTURE_COORDINATES = "v_TextureCoordinates"
-        private const val U_TEXTURE_UNIT = "u_TextureUnit"
 
         private const val VERTEX_SHADER = """
             uniform mat4 $U_MVP_MATRIX;
@@ -24,6 +23,8 @@ class ShaderProgram(alpha: Float) {
                 $V_TEXTURE_COORDINATES = $A_TEXTURE_COORDINATES;
             }
         """
+
+        private const val U_TEXTURE_UNIT = "u_TextureUnit"
 
         // --------------- ShaderHelpers -----------------------------------------------------------
 
@@ -141,8 +142,8 @@ class ShaderProgram(alpha: Float) {
     }
 
     private val shaderProgram: Int
-    private val uMvpMatrix: Int
 
+    private val uMvpMatrix: Int
     val aPosition: Int
     val aTextureCoordinates: Int
     val uTextureUnit: Int
@@ -167,7 +168,7 @@ class ShaderProgram(alpha: Float) {
         shaderProgram = linkProgram(vertexShader, fragmentShader)
         validateProgram(shaderProgram)
 
-        // Retrieve pointer indices for input variables.
+        // Retrieve pointer indices to input to variables.
         uMvpMatrix = glGetUniformLocation(shaderProgram, U_MVP_MATRIX)
         aPosition = glGetAttribLocation(shaderProgram, A_POSITION)
         aTextureCoordinates = glGetAttribLocation(shaderProgram, A_TEXTURE_COORDINATES)

@@ -18,17 +18,17 @@ import javax.microedition.khronos.opengles.GL10
  * MainActivity はその他の UI のコードなども盛り込まれることになるので、コードの見通しが悪くなり、
  * あまり実用的ではないので、素直に分離している。
  */
-class Renderer(context: Context?) : GLSurfaceView.Renderer {
+class Renderer(context: Context) : GLSurfaceView.Renderer {
 
     companion object {
         private val TAG = Renderer::class.simpleName
     }
 
-    private val bitmap: Bitmap? = Texture.loadBitmap(context!!, R.drawable.hill_14_14552_6451)
+    private val bitmap: Bitmap? = Texture.loadBitmap(context, R.drawable.hill_14_14552_6451)
     private var texture: Texture? = null
     private var tile: Tile? = null
 
-    private val bitmapOverlay: Bitmap? = Texture.loadBitmap(context!!, R.drawable.pale_14_14552_6451)
+    private val bitmapOverlay: Bitmap? = Texture.loadBitmap(context, R.drawable.pale_14_14552_6451)
     private var textureOverlay: Texture? = null
     private var tileOverlay: Tile? = null
 
@@ -41,7 +41,8 @@ class Renderer(context: Context?) : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(gl10: GL10, eglConfig: EGLConfig) {
         Log.v(TAG, "onSurfaceCreated")
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
+        glClearColor(0f, 0f, 0f, 0f)
+
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 

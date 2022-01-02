@@ -114,7 +114,7 @@ class Tile(
      * GLSurfaceView.onDrawFrame でループ処理されるべき処理
      */
     fun draw() {
-        if (textureName != 0) { // mTexture が無効でない（0 でない）場合のみ実行
+        if (textureName != 0) { // Texture が無効でない（0 でない）場合のみ実行
             setTexture()
             bindDataToShaderVariable()
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)

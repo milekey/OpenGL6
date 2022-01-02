@@ -11,34 +11,28 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.simpleName
     }
 
-    private var glSurfaceView: GLSurfaceView? = null
+    private lateinit var glSurfaceView: GLSurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "onCreate")
 
         glSurfaceView = GLSurfaceView(this)
-        glSurfaceView!!.setEGLContextClientVersion(2)
-        glSurfaceView!!.setRenderer(Renderer(this))
+        glSurfaceView.setEGLContextClientVersion(2)
+        glSurfaceView.setRenderer(Renderer(this))
 
         setContentView(glSurfaceView)
-    }
-
-    override fun onDestroy() {
-        Log.v(TAG, "onDestroy")
-        glSurfaceView = null
-        super.onDestroy()
     }
 
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume")
-        glSurfaceView!!.onResume()
+        glSurfaceView.onResume()
     }
 
     override fun onPause() {
         Log.v(TAG, "onPause")
-        glSurfaceView!!.onPause()
+        glSurfaceView.onPause()
         super.onPause()
     }
 }
