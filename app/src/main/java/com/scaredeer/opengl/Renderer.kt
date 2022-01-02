@@ -25,11 +25,11 @@ class Renderer(context: Context) : GLSurfaceView.Renderer {
     }
 
     private val bitmap: Bitmap? = Texture.loadBitmap(context, R.drawable.hill_14_14552_6451)
-    private var texture: Texture? = null
+    private lateinit var texture: Texture
     private lateinit var tile: Tile
 
     private val bitmapOverlay: Bitmap? = Texture.loadBitmap(context, R.drawable.pale_14_14552_6451)
-    private var textureOverlay: Texture? = null
+    private lateinit var textureOverlay: Texture
     private lateinit var tileOverlay: Tile
 
     private lateinit var shaderProgram: ShaderProgram
@@ -107,13 +107,13 @@ class Renderer(context: Context) : GLSurfaceView.Renderer {
         shaderProgram.use()
         // Pass the matrix into the shader program.
         shaderProgram.setMvpMatrix(vpMatrix)
-        tile = Tile(shaderProgram, 0, 0, texture!!.name)
+        tile = Tile(shaderProgram, 0, 0, texture.name)
 
         // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
         shaderProgramOverlay.use()
         // Pass the matrix into the shader program.
         shaderProgramOverlay.setMvpMatrix(vpMatrix)
-        tileOverlay = Tile(shaderProgramOverlay, 0, 0, textureOverlay!!.name)
+        tileOverlay = Tile(shaderProgramOverlay, 0, 0, textureOverlay.name)
     }
 
     override fun onDrawFrame(gl10: GL10) {
