@@ -26,14 +26,14 @@ class Renderer(context: Context) : GLSurfaceView.Renderer {
 
     private val bitmap: Bitmap? = Texture.loadBitmap(context, R.drawable.hill_14_14552_6451)
     private var texture: Texture? = null
-    private var tile: Tile? = null
+    private lateinit var tile: Tile
 
     private val bitmapOverlay: Bitmap? = Texture.loadBitmap(context, R.drawable.pale_14_14552_6451)
     private var textureOverlay: Texture? = null
-    private var tileOverlay: Tile? = null
+    private lateinit var tileOverlay: Tile
 
-    private var shaderProgram: ShaderProgram? = null
-    private var shaderProgramOverlay: ShaderProgram? = null
+    private lateinit var shaderProgram: ShaderProgram
+    private lateinit var shaderProgramOverlay: ShaderProgram
 
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
@@ -104,26 +104,26 @@ class Renderer(context: Context) : GLSurfaceView.Renderer {
         )
 
         // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
-        shaderProgram!!.use()
+        shaderProgram.use()
         // Pass the matrix into the shader program.
-        shaderProgram!!.setMvpMatrix(vpMatrix)
-        tile = Tile(shaderProgram!!, 0, 0, texture!!.name)
+        shaderProgram.setMvpMatrix(vpMatrix)
+        tile = Tile(shaderProgram, 0, 0, texture!!.name)
 
         // setMvpMatrix（glUniformMatrix4fv）するにあたってあらかじめ use（glUseProgram）する必要がある
-        shaderProgramOverlay!!.use()
+        shaderProgramOverlay.use()
         // Pass the matrix into the shader program.
-        shaderProgramOverlay!!.setMvpMatrix(vpMatrix)
-        tileOverlay = Tile(shaderProgramOverlay!!, 0, 0, textureOverlay!!.name)
+        shaderProgramOverlay.setMvpMatrix(vpMatrix)
+        tileOverlay = Tile(shaderProgramOverlay, 0, 0, textureOverlay!!.name)
     }
 
     override fun onDrawFrame(gl10: GL10) {
         // Clear the rendering surface.
         glClear(GL_COLOR_BUFFER_BIT)
 
-        shaderProgram!!.use()
-        tile!!.draw()
+        shaderProgram.use()
+        tile.draw()
 
-        shaderProgramOverlay!!.use()
-        tileOverlay!!.draw()
+        shaderProgramOverlay.use()
+        tileOverlay.draw()
     }
 }
