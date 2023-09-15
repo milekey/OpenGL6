@@ -5,6 +5,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
+private val TAG = Tile::class.simpleName
+
 /**
  * @param [shaderProgram] ShaderProgram オブジェクト。
  * @param [left]          タイルの左辺の座標
@@ -18,8 +20,6 @@ class Tile(
 ) {
 
     companion object {
-        private val TAG = Tile::class.simpleName
-
         private const val BYTES_PER_FLOAT = 4 // Java float is 32-bit = 4-byte
         private const val POSITION_COMPONENT_COUNT = 2 // x, y（※ z は常に 0 なので省略）
         private const val TEXTURE_COORDINATES_COMPONENT_COUNT = 2 // s, t

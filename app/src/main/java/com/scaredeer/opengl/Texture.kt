@@ -7,11 +7,11 @@ import android.opengl.GLES20.*
 import android.opengl.GLUtils
 import android.util.Log
 
+private val TAG = Texture::class.simpleName
+
 class Texture(bitmap: Bitmap) {
 
     companion object {
-        private val TAG = Texture::class.simpleName
-
         /**
          * リソースから Bitmap を読み込みたい場合に。
          *

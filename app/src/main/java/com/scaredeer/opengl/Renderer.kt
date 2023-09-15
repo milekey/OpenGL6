@@ -9,6 +9,8 @@ import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
+private val TAG = Renderer::class.simpleName
+
 /**
  * ゲームのメインループに相当するクラス
  * （もちろん、画面の更新を中心としたもので、ゲームモデルの論理的なループとは必ずしも同じではないが、
@@ -19,10 +21,6 @@ import javax.microedition.khronos.opengles.GL10
  * あまり実用的ではないので、素直に分離している。
  */
 class Renderer(context: Context) : GLSurfaceView.Renderer {
-
-    companion object {
-        private val TAG = Renderer::class.simpleName
-    }
 
     private val bitmap: Bitmap? = Texture.loadBitmap(context, R.drawable.hill_14_14552_6451)
     private lateinit var texture: Texture
